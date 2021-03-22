@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons} from '@expo/vector-icons';
 import LogSensorPanel from './components/LogSensorPanel.js'
+import ViewPager from '@react-native-community/viewpager';
 import mascotte from './assets/piantina_insomma.png';
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.70}
@@ -66,45 +67,58 @@ export default class initialScreen extends React.Component {
 
       <View style={styles.fantasy}>
 
-        <View style={{flexDirection: 'row'}}>
-          <LogSensorPanel
-            sensorName="Suolo"
-            sensorValue = {this.state.jsonSensorValues.REFSS}
-            sensorHum = {this.state.jsonSensorValues.REFSS_HUM}
-            maxValue = {this.state.jsonSensorRanges.REFSSMAX}
-            minValue = {this.state.jsonSensorRanges.REFSSMIN}
-            maxHum = {this.state.jsonSensorRanges.REFSSMAX_hum}
-            minHum = {this.state.jsonSensorRanges.REFSSMIN_hum}
-            />
-          <LogSensorPanel
-            sensorName="Interno"
-            sensorValue = {this.state.jsonSensorValues.REFAI}
-            sensorHum = {this.state.jsonSensorValues.REFAI_HUM}
-            maxValue = {this.state.jsonSensorRanges.REFAIMAX}
-            minValue = {this.state.jsonSensorRanges.REFAIMIN}
-            maxHum = {this.state.jsonSensorRanges.REFAIMAX_hum}
-            minHum = {this.state.jsonSensorRanges.REFAIMIN_hum}
-            />
-        </View>
+      <ViewPager style={styles.viewPager} initialPage={0}>
+          <View style={styles.page} key="1">
+            <View style={{flexDirection: 'row'}}>
+              <LogSensorPanel
+                sensorName="Suolo"
+                sensorValue = {this.state.jsonSensorValues.REFSS}
+                sensorHum = {this.state.jsonSensorValues.REFSS_HUM}
+                maxValue = {this.state.jsonSensorRanges.REFSSMAX}
+                minValue = {this.state.jsonSensorRanges.REFSSMIN}
+                maxHum = {this.state.jsonSensorRanges.REFSSMAX_hum}
+                minHum = {this.state.jsonSensorRanges.REFSSMIN_hum}
+                />
+              <LogSensorPanel
+                sensorName="Interno"
+                sensorValue = {this.state.jsonSensorValues.REFAI}
+                sensorHum = {this.state.jsonSensorValues.REFAI_HUM}
+                maxValue = {this.state.jsonSensorRanges.REFAIMAX}
+                minValue = {this.state.jsonSensorRanges.REFAIMIN}
+                maxHum = {this.state.jsonSensorRanges.REFAIMAX_hum}
+                minHum = {this.state.jsonSensorRanges.REFAIMIN_hum}
+                />
+            </View>
 
-        <View style={{flexDirection: 'row'}}>
-          <LogSensorPanel
-            sensorName="Esterno"
-            sensorValue = {this.state.jsonSensorValues.REFAE}
-            sensorHum = {this.state.jsonSensorValues.REFAE_HUM}
-            maxValue = {this.state.jsonSensorRanges.REFAEMAX}
-            minValue = {this.state.jsonSensorRanges.REFAEMIN}
-            maxHum = {this.state.jsonSensorRanges.REFAEMAX_hum}
-            minHum = {this.state.jsonSensorRanges.REFAEMIN_hum}
-            />
-          <LogSensorPanel
-            sensorName="Luce"
-            sensorValue = {this.state.jsonSensorValues.REFL}
-            maxValue = {this.state.jsonSensorRanges.REFLMAX}
-            minValue = {this.state.jsonSensorRanges.REFLMIN}
-            />
-        </View>
+            <View style={{flexDirection: 'row'}}>
+              <LogSensorPanel
+                sensorName="Esterno"
+                sensorValue = {this.state.jsonSensorValues.REFAE}
+                sensorHum = {this.state.jsonSensorValues.REFAE_HUM}
+                maxValue = {this.state.jsonSensorRanges.REFAEMAX}
+                minValue = {this.state.jsonSensorRanges.REFAEMIN}
+                maxHum = {this.state.jsonSensorRanges.REFAEMAX_hum}
+                minHum = {this.state.jsonSensorRanges.REFAEMIN_hum}
+                />
+              <LogSensorPanel
+                sensorName="Luce"
+                sensorValue = {this.state.jsonSensorValues.REFL}
+                maxValue = {this.state.jsonSensorRanges.REFLMAX}
+                minValue = {this.state.jsonSensorRanges.REFLMIN}
+                />
+            </View>
+          </View>
 
+          <View style={styles.page} key="2">
+            <Text> SCHERMATA REPORT </Text>
+          </View>
+
+
+          <View style={styles.page} key="3">
+            <Text> SCHERMATA SVILUPPO </Text>
+          </View>
+
+        </ViewPager>
       </View>
 
       <View  style={styles.submain}>
@@ -160,6 +174,19 @@ const styles = StyleSheet.create({
 
         elevation: 9,
       },
+
+
+      viewPager: {
+          flex: 1,
+          width: '100%'
+        },
+
+
+        page:{
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+
 
       submain: {
           flex: 1,
