@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text, View, StyleSheet, Dimensions,TouchableOpacity } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome, Ionicons , MaterialCommunityIcons, MaterialIcons, Entypo, Feather, FontAwesome5} from '@expo/vector-icons';
+import {LineChart} from 'react-native-chart-kit'
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.70}
+
 
 export default  class LogSensorPanel extends React.Component {
 
@@ -11,8 +13,18 @@ export default  class LogSensorPanel extends React.Component {
     super(props);
      this.state = {
        SensorName: this.props.sensorName,
+       SensorMode: true,
      }
 
+  }
+
+
+  onPanelChange = (sensorSelected) => {
+    console.log(sensorSelected)
+    if(this.state.SensorMode){
+      this.setState({SensorMode: false});
+    }
+    else this.setState({SensorMode: true});
   }
 
 
@@ -49,41 +61,99 @@ export default  class LogSensorPanel extends React.Component {
       if(colorValue == "#FEE23E" || colorHum == "#FEE23E")
         iconAdded = <FontAwesome name="warning" size={24} color="#FEE23E" />
 
+      if(this.state.SensorMode){
+          return (
+            <TouchableOpacity style={styles.panel}>
+            <LinearGradient
+            colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
+             style = {styles.gradientContainer}
+             />
+              <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                  <Text  style={styles.sensorName}>  {SensorType}  </Text>
+                  {iconAdded}
+                </View>
+                <View style={{flexDirection: 'column', margin: '1%',alignItems: 'center', justifyContent: 'center'}}>
+                  {symbol}
+                  <View style={{with: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{fontSize: 15}}>{this.props.minValue}°C - {this.props.maxValue}°C</Text>
+                    <Text style={{fontSize: 15}}> {this.props.minHum}% - {this.props.maxHum}%</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity style={[styles.roundButton,{  backgroundColor: colorValue}]} onPress={() => this.onPanelChange("Val")}>
+                  <MaterialCommunityIcons name={SensorType == "Luce"? "lightbulb-on" : "temperature-celsius"} size={20} color="black" />
+                  <Text style={{fontWeight: "bold"}}>{this.props.sensorValue}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.roundButton,{  backgroundColor: colorHum}]} onPress={() => this.onPanelChange("Hum")}>
+                  <Ionicons  name= {SensorType == "Luce"? "ios-close" : "water"}  size={20} color="#6495ED" />
+                  <Text style={{fontWeight: "bold"}}>{SensorType == "Luce"? "--" : this.props.sensorHum}</Text>
+                </TouchableOpacity>
+              </View>
+              </TouchableOpacity>
 
 
-    return (
-      <TouchableOpacity style={styles.panel}>
-      <LinearGradient
-      colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
-       style = {styles.gradientContainer}
-       />
-        <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text  style={styles.sensorName}>  {SensorType}  </Text>
-            {iconAdded}
-          </View>
-          <View style={{flexDirection: 'column', margin: '1%',alignItems: 'center', justifyContent: 'center'}}>
-            {symbol}
-            <View style={{with: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={{fontSize: 15}}>{this.props.minValue}°C - {this.props.maxValue}°C</Text>
-              <Text style={{fontSize: 15}}> {this.props.minHum}% - {this.props.maxHum}%</Text>
-            </View>
-          </View>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <View style={[styles.roundButton,{  backgroundColor: colorValue}]}>
-            <MaterialCommunityIcons name="temperature-celsius" size={20} color="black" />
-            <Text style={{fontWeight: "bold"}}>{this.props.sensorValue}</Text>
-          </View>
-          <View style={[styles.roundButton,{  backgroundColor: colorHum}]}>
-            <Ionicons  name="water" size={20} color="#6495ED" />
-            <Text style={{fontWeight: "bold"}}>{SensorType == "Luce"? "--" : this.props.sensorHum}</Text>
-          </View>
-        </View>
-        </TouchableOpacity>
+          );
+        }
+        else{
 
+          return(
+            <TouchableOpacity style={styles.panel} onPress={() => this.onPanelChange("Nothing")}>
+              <LinearGradient
+              colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
+               style = {styles.gradientContainer}/>
 
-    );
+               <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                 <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                   <Text  style={styles.sensorName}>  {SensorType}  </Text>
+                     <Text>Temperatura</Text>
+                     <LineChart
+                       data={{
+                         labels: ['1', '2', '3', '4', '5', '6'],
+                         datasets: [{
+                           data: [
+                             Math.random() * 100,
+                             Math.random() * 100,
+                             Math.random() * 100,
+                             Math.random() * 100,
+                             Math.random() * 100,
+                             Math.random() * 100
+                           ]
+                         }]
+                       }}
+                      width={140}
+                      height={170}
+                       chartConfig={{
+                         backgroundColor: '#ECEBC9',
+                         backgroundGradientFrom: '#ECEBC9',
+                         backgroundGradientTo: '#ECEBC9',
+                         decimalPlaces: 2, // optional, defaults to 2dp
+                         color: (opacity = 1) => `rgba(167, 212, 137, 1)`,
+                         style: {
+                           borderRadius: 16,
+                         }
+                       }}
+                       bezier
+                       style={{
+                         marginVertical: 8,
+                         borderRadius: 16,
+                         shadowColor: "#000",
+                          shadowOffset: {
+                          	width: 0,
+                          	height: 2,
+                          },
+                          shadowOpacity: 0.25,
+                          shadowRadius: 3.84,
+
+                          elevation: 5,
+                       }}
+                     />
+                 </View>
+              </View>
+            </TouchableOpacity>
+          )
+        }
   }
 }
 
@@ -92,6 +162,7 @@ const styles = StyleSheet.create ({
     panel: {
       padding: '3%',
       margin: '2%',
+      width: '42%',
       flexDirection: 'column',
       backgroundColor: '#A7D489',
       alignItems: 'center',

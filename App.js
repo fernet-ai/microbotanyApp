@@ -59,6 +59,12 @@ export default class initialScreen extends React.Component {
           });
       }
 
+      goSettings = async () => {
+
+      }
+
+
+
 
   	render(){
 
@@ -69,7 +75,7 @@ export default class initialScreen extends React.Component {
 
       <ViewPager style={styles.viewPager} initialPage={0}>
           <View style={styles.page} key="1">
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row',  }}>
               <LogSensorPanel
                 sensorName="Suolo"
                 sensorValue = {this.state.jsonSensorValues.REFSS}
@@ -90,7 +96,7 @@ export default class initialScreen extends React.Component {
                 />
             </View>
 
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', }}>
               <LogSensorPanel
                 sensorName="Esterno"
                 sensorValue = {this.state.jsonSensorValues.REFAE}
@@ -132,7 +138,8 @@ export default class initialScreen extends React.Component {
           <TouchableOpacity style={styles.mascotteView}>
             <Image source={mascotte} style={{ width: '100%', height: '100%'}} />
           </TouchableOpacity>
-          <Ionicons name="settings" size={40} color="#D5E7B8" />
+          <TouchableOpacity onPress={this.goSettings}><Ionicons name="settings" size={40} color="#D5E7B8" /></TouchableOpacity>
+
         </View>
       </View>
 
@@ -178,11 +185,12 @@ const styles = StyleSheet.create({
 
       viewPager: {
           flex: 1,
-          width: '100%'
+          width: '100%',
         },
 
 
         page:{
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
         },
