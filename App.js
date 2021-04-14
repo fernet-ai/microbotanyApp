@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Animated} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons} from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, FontAwesome} from '@expo/vector-icons';
 import LogSensorPanel from './components/LogSensorPanel.js'
 import ViewPager from '@react-native-community/viewpager';
 import mascotte from './assets/piantina_insomma.png';
@@ -128,20 +128,66 @@ export default class initialScreen extends React.Component {
       </View>
 
       <View  style={styles.submain}>
-        <View style={{
-          width: '25%',
-          height: '100%',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-evenly',
-        }}>
-          <TouchableOpacity style={styles.mascotteView}>
-            <Image source={mascotte} style={{ width: '100%', height: '100%'}} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.goSettings}><Ionicons name="settings" size={40} color="#D5E7B8" /></TouchableOpacity>
 
-        </View>
+            <View style={{
+               flex: 7,
+               flexDirection: 'row',
+               alignItems: 'stretch',
+               justifyContent: 'center',
+             }}>
+
+                <View style={{
+                  width: '25%',
+                   justifyContent: 'center',
+                 }}>
+                 <TouchableOpacity style={styles.mascotteView}>
+                 <Image source={mascotte} style={{ width: '100%', height: '100%'}} />
+                </TouchableOpacity>
+                </View>
+
+                <View style={{
+                   width: '20%',
+                 }}>
+                </View>
+
+                <View style={{
+                  width: '55%',
+                  alignItems: 'center',
+                 }}>
+                   <TouchableOpacity style={styles.roundButton} >
+                     <Text>Sbargia's Serra</Text>
+                     <MaterialCommunityIcons name="home-analytics" size={60} color="black" />
+                   </TouchableOpacity>
+                </View>
+
+            </View>
+
+
+
+
+            <View style={{
+               flex: 3,
+               flexDirection: 'row',
+               alignItems: 'center',
+               justifyContent: 'space-evenly',
+             }}>
+              <TouchableOpacity onPress={this.goSettings}>
+                  <Ionicons name="settings" size={40} color="#ECEBC9" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={this.goSettings}>
+                <MaterialCommunityIcons name="book-open-page-variant" size={40} color="#ECEBC9" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={this.goSettings}>
+                  <FontAwesome name="user" size={40} color="#ECEBC9" />
+              </TouchableOpacity>
+
+            </View>
+
       </View>
+
+
 
       </View>
 	  );
@@ -199,16 +245,14 @@ const styles = StyleSheet.create({
       submain: {
           flex: 1,
           width: '100%',
-          alignItems: 'flex-start',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
         },
 
 
 
     mascotteView :{
       width: '100%',
-      height: '40%',
+      height: '60%',
       backgroundColor: '#ECEBC9',
       alignItems: 'center',
       justifyContent: 'center',
@@ -226,5 +270,31 @@ const styles = StyleSheet.create({
 
     },
 
+    roundButton: {
+      height: '60%',
+      width: '80%',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      padding: '5%',
+      alignItems: 'center',
+      borderRadius: 100,
+      borderTopRightRadius: 0,
+      borderTopLeftRadius: 0,
+      backgroundColor: '#ECEBC9',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.48,
+      shadowRadius: 11.95,
+
+      elevation: 18,
+    },
+
+
+    TextUs: {
+        fontSize: 20,
+      },
 
 });

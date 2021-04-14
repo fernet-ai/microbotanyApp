@@ -129,7 +129,7 @@ export default  class LogSensorPanel extends React.Component {
                          backgroundGradientFrom: '#ECEBC9',
                          backgroundGradientTo: '#ECEBC9',
                          decimalPlaces: 2, // optional, defaults to 2dp
-                         color: (opacity = 1) => `rgba(167, 212, 137, 1)`,
+                         color: (opacity = 1) => `rgba(0, 0, 0, 0.7)`,
                          style: {
                            borderRadius: 16,
                          }
