@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Dimensions,TouchableOpacity } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
-import { FontAwesome, Ionicons , MaterialCommunityIcons, MaterialIcons, Entypo, Feather, FontAwesome5} from '@expo/vector-icons';
-import {LineChart} from 'react-native-chart-kit'
+import { FontAwesome, Ionicons , MaterialCommunityIcons, MaterialIcons, Entypo, Feather, FontAwesome5, AntDesign} from '@expo/vector-icons';
+import RangePicker from './RangePicker';
+
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.70}
 
@@ -33,6 +34,11 @@ export default  class LogSensorPanel extends React.Component {
     if(val >= min && val <= max) return "white";
     if(val < min || val > max) return "#FD6A02";
   }
+
+  selectRange = () => {
+
+  }
+
 
 
   render() {
@@ -99,59 +105,27 @@ export default  class LogSensorPanel extends React.Component {
         else{
 
           return(
-            <TouchableOpacity style={styles.panel} onPress={() => this.onPanelChange("Nothing")}>
+            <View style={styles.panel} onPress={() => this.onPanelChange("Nothing")}>
               <LinearGradient
               colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
                style = {styles.gradientContainer}/>
+               <View style={{ alignItems: 'center', flex: 1, width: '100%',  flexDirection: 'column', justifyContent: 'center' }}>
 
-               <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                 <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                   <Text  style={styles.sensorName}>  {SensorType}  </Text>
-                     <Text>Temperatura</Text>
-                     <LineChart
-                       data={{
-                         labels: ['1', '2', '3', '4', '5', '6'],
-                         datasets: [{
-                           data: [
-                             Math.random() * 100,
-                             Math.random() * 100,
-                             Math.random() * 100,
-                             Math.random() * 100,
-                             Math.random() * 100,
-                             Math.random() * 100
-                           ]
-                         }]
-                       }}
-                      width={140}
-                      height={170}
-                       chartConfig={{
-                         backgroundColor: '#ECEBC9',
-                         backgroundGradientFrom: '#ECEBC9',
-                         backgroundGradientTo: '#ECEBC9',
-                         decimalPlaces: 2, // optional, defaults to 2dp
-                         color: (opacity = 1) => `rgba(0, 0, 0, 0.7)`,
-                         style: {
-                           borderRadius: 16,
-                         }
-                       }}
-                       bezier
-                       style={{
-                         marginVertical: 8,
-                         borderRadius: 16,
-                         shadowColor: "#000",
-                          shadowOffset: {
-                          	width: 0,
-                          	height: 2,
-                          },
-                          shadowOpacity: 0.25,
-                          shadowRadius: 3.84,
-
-                          elevation: 5,
-                       }}
-                     />
+                 <View style={[styles.roundButton,{  backgroundColor: colorHum}]} >
+                   <Ionicons  name= {SensorType == "Luce"? "ios-close" : "water"}  size={20} color="#6495ED" />
+                   <Text style={{fontWeight: "bold"}}>{SensorType == "Luce"? "--" : this.props.sensorHum}</Text>
                  </View>
-              </View>
-            </TouchableOpacity>
+
+                 <RangePicker min= {-3}  max={9} />
+
+                 <TouchableOpacity  onPress={() => this.onPanelChange("Nothing")}
+                 style={styles.confirmButton}>
+                  <AntDesign name="checkcircle" size={24} color="#A7D489" />
+                 </TouchableOpacity>
+
+             </View>
+
+            </View>
           )
         }
   }
@@ -203,6 +177,25 @@ const styles = StyleSheet.create ({
     alignItems: 'center',
     borderRadius: 100,
     backgroundColor: 'white',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.48,
+    shadowRadius: 11.95,
+
+    elevation: 18,
+  },
+
+
+  confirmButton : {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ECEBC9',
+    paddingHorizontal: 15,
+    borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

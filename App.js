@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Animated} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Animated} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, MaterialCommunityIcons, FontAwesome} from '@expo/vector-icons';
-import LogSensorPanel from './components/LogSensorPanel.js'
+import { Ionicons, MaterialCommunityIcons, FontAwesome, AntDesign} from '@expo/vector-icons';
+import LogSensorPanel from './components/LogSensorPanel.js';
 import ViewPager from '@react-native-community/viewpager';
 import mascotte from './assets/piantina_insomma.png';
+import {LineChart} from 'react-native-chart-kit';
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.70}
 
@@ -17,6 +18,7 @@ export default class initialScreen extends React.Component {
       this.state = {
         jsonSensorValues: '',
         jsonSensorRanges: '',
+        animMascotte:  new Animated.Value(0),
       }
     }
 
@@ -59,10 +61,21 @@ export default class initialScreen extends React.Component {
           });
       }
 
+
+      openMascotte(offset) {
+        console.log("offset: "+ offset);
+        Animated.timing(
+          this.state.animMascotte,
+          { toValue: new Animated.Value(offset),
+            useNativeDriver: false,
+            duration: 500,
+           }
+        ).start();
+      }
+
       goSettings = async () => {
 
       }
-
 
 
 
@@ -116,7 +129,50 @@ export default class initialScreen extends React.Component {
           </View>
 
           <View style={styles.page} key="2">
-            <Text> SCHERMATA REPORT </Text>
+               <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                 <Text  style={styles.sensorName}> Temperatura °C </Text>
+                   <LineChart
+                     data={{
+                       labels: ['1', '2', '3', '4', '5', '6'],
+                       datasets: [{
+                         data: [
+                           Math.random() * 100,
+                           Math.random() * 100,
+                           Math.random() * 100,
+                           Math.random() * 100,
+                           Math.random() * 100,
+                           Math.random() * 100
+                         ]
+                       }]
+                     }}
+                     width={Dimensions.get('window').width - 30}
+                     height= {Dimensions.get('window').height / 3}
+                     chartConfig={{
+                       backgroundColor: '#ECEBC9',
+                       backgroundGradientFrom: '#ECEBC9',
+                       backgroundGradientTo: '#ECEBC9',
+                       decimalPlaces: 2, // optional, defaults to 2dp
+                       color: (opacity = 1) => `rgba(0, 0, 0, 0.7)`,
+                       style: {
+                         borderRadius: 16,
+                       }
+                     }}
+                     bezier
+                     style={{
+                       marginVertical: 8,
+                       borderRadius: 16,
+                       shadowColor: "#000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+
+                        elevation: 5,
+                     }}
+                   />
+               </View>
           </View>
 
 
@@ -140,7 +196,7 @@ export default class initialScreen extends React.Component {
                   width: '25%',
                    justifyContent: 'center',
                  }}>
-                 <TouchableOpacity style={styles.mascotteView}>
+                 <TouchableOpacity style={styles.mascotteView} onPress={() => this.openMascotte(-80)}>
                  <Image source={mascotte} style={{ width: '100%', height: '100%'}} />
                 </TouchableOpacity>
                 </View>
@@ -154,10 +210,17 @@ export default class initialScreen extends React.Component {
                   width: '55%',
                   alignItems: 'center',
                  }}>
-                   <TouchableOpacity style={styles.roundButton} >
+
+                    <TouchableOpacity style={styles.plus} >
+                      <FontAwesome name="plus" size={25} color="black" />
+                    </TouchableOpacity>
+
+                   <View style={styles.roundButton} >
                      <Text>Sbargia's Serra</Text>
                      <MaterialCommunityIcons name="home-analytics" size={60} color="black" />
-                   </TouchableOpacity>
+                   </View>
+
+
                 </View>
 
             </View>
@@ -186,9 +249,6 @@ export default class initialScreen extends React.Component {
             </View>
 
       </View>
-
-
-
       </View>
 	  );
 
@@ -267,6 +327,30 @@ const styles = StyleSheet.create({
       shadowRadius: 11.95,
 
       elevation: 18,
+
+    },
+
+    plus :{
+      backgroundColor: '#ECEBC9',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: 'white',
+      borderRadius: 120,
+      paddingHorizontal: '8%',
+      paddingVertical: '6%',
+      position: 'absolute',
+      bottom: 40,
+      right: 20,
+      borderColor: 'black',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.48,
+      shadowRadius: 11.95,
+
+      elevation: 20,
 
     },
 
