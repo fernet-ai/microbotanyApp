@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Dimensions,TouchableOpacity, SectionList, FlatList } from 'react-native'
 import SmoothPicker from "react-native-smooth-picker";
+import {AntDesign} from '@expo/vector-icons';
+
 
 
 
@@ -18,14 +20,12 @@ export default  class RangePicker extends React.Component {
 
 
 	handleChangeMin  =  index  =>  {
-		console.log(index);
     this.setState ( {
       selectedMin : index
     });
   	};
 
 		handleChangeMax  =  index  =>  {
-			console.log(index);
 			this.setState ( {
 				selectedMax : index
 			});
@@ -44,6 +44,23 @@ export default  class RangePicker extends React.Component {
       return interval;
     };
 
+    /*SensorName = props dal parent, isHum = val/hum dal parent, min = state.selectedMin, max = state.selectedMax*/
+    ConfirmSelectedRange = (min, max) => {
+        console.log("ecco il nome del mio sensore: "+ this.props.sensorName + "  anche "+ this.props.isHum);
+        console.log("e min: "+ this.state.selectedMin+ " max: "+this.state.selectedMax)
+
+        if(this.props.isHum){
+          fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MIN_hum/'+this.state.selectedMin);
+          fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MAX_hum/'+this.state.selectedMax);
+         }
+         else{
+           fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MIN/'+this.state.selectedMin);
+           fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MAX/'+this.state.selectedMax);           
+         }
+
+        this.props.callback('Nothing');
+    }
+
 
 	render() {
     return (
@@ -54,7 +71,7 @@ export default  class RangePicker extends React.Component {
 				<Text style = {{fontWeight: "bold", fontSize: 12}}>Max: {this.state.selectedMax}°C</Text>
 			</View>
 
-			<View style = {{flexDirection: 'row', marginVertical: 20}}>
+			<View style = {{flexDirection: 'row', marginVertical: 10, flex : 2}}>
 				<SmoothPicker
 				  style = {{}}
 					selectOnPress = {true}
@@ -83,11 +100,11 @@ export default  class RangePicker extends React.Component {
             )}
           />
 
-
-
 			</View>
 
-
+      <TouchableOpacity  onPress={() => this.ConfirmSelectedRange()} style={styles.confirmButton}>
+       <AntDesign name="checkcircle" size={24} color="#A7D489" />
+      </TouchableOpacity>
 
       </View>
     );
@@ -98,7 +115,7 @@ const styles = StyleSheet.create ({
 
 	container: {
 		paddingVertical: '5%',
-		flex: 4,
+		flex: 7,
 		width: '100%',
 		flexDirection: 'row',
 		height: '50%',
@@ -121,6 +138,25 @@ const styles = StyleSheet.create ({
 		borderRadius: 3,
 		borderColor: '#F6F6DB',
 		margin: 1
-	}
+	},
+
+
+    confirmButton : {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#ECEBC9',
+      paddingHorizontal: 15,
+      borderRadius: 20,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.48,
+      shadowRadius: 11.95,
+
+      elevation: 18,
+    },
 
 })

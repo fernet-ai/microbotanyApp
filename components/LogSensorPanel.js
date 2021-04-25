@@ -15,13 +15,18 @@ export default  class LogSensorPanel extends React.Component {
      this.state = {
        SensorName: this.props.sensorName,
        SensorMode: true,
+       TypeValue: undefined,
      }
 
   }
 
 
   onPanelChange = (sensorSelected) => {
-    console.log(sensorSelected)
+    console.log(sensorSelected);
+    this.setState({
+        TypeValue: sensorSelected
+      });
+
     if(this.state.SensorMode){
       this.setState({SensorMode: false});
     }
@@ -35,9 +40,10 @@ export default  class LogSensorPanel extends React.Component {
     if(val < min || val > max) return "#FD6A02";
   }
 
-  selectRange = () => {
 
-  }
+  getResponse(result){
+    this.onPanelChange(result); //dovrebbe restituire Nothing
+}
 
 
 
@@ -104,29 +110,57 @@ export default  class LogSensorPanel extends React.Component {
         }
         else{
 
-          return(
-            <View style={styles.panel} onPress={() => this.onPanelChange("Nothing")}>
-              <LinearGradient
-              colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
-               style = {styles.gradientContainer}/>
-               <View style={{ alignItems: 'center', flex: 1, width: '100%',  flexDirection: 'column', justifyContent: 'center' }}>
+            var dictionary = {
+              "Suolo": "REFSS",
+              "Interno":"REFAI",
+              "Esterno": "REFAE",
+              "Luce": "REFL"
+            };
 
-                 <View style={[styles.roundButton,{  backgroundColor: colorHum}]} >
-                   <Ionicons  name= {SensorType == "Luce"? "ios-close" : "water"}  size={20} color="#6495ED" />
-                   <Text style={{fontWeight: "bold"}}>{SensorType == "Luce"? "--" : this.props.sensorHum}</Text>
+
+            if(this.state.TypeValue == 'Val'){
+
+               return(
+                <View style={styles.panel}>
+                  <LinearGradient
+                  colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
+                   style = {styles.gradientContainer}/>
+                   <View style={{ alignItems: 'center', flex: 1, width: '100%',  flexDirection: 'column', justifyContent: 'center' }}>
+
+                     <View style={[styles.roundButton,{  backgroundColor: colorHum}]} >
+                     <MaterialCommunityIcons name={SensorType == "Luce"? "lightbulb-on" : "temperature-celsius"} size={20} color="black" />
+                     <Text style={{fontWeight: "bold"}}>{this.props.sensorValue}</Text>
+                     </View>
+
+                     <RangePicker sensorName = {dictionary[SensorType]} isHum = {false}   min= {parseInt(this.props.minValue)}  max={parseInt(this.props.maxValue)} callback={this.getResponse.bind(this)}/>
+
+
+
                  </View>
+                </View>
+              )
+            }
+            else if(this.state.TypeValue == 'Hum'){
+              return (
+              <View style={styles.panel}>
+                <LinearGradient
+                colors={['rgba(255, 231, 184, 0.30)', 'transparent']}
+                 style = {styles.gradientContainer}/>
+                 <View style={{ alignItems: 'center', flex: 1, width: '100%',  flexDirection: 'column', justifyContent: 'center' }}>
 
-                 <RangePicker min= {-3}  max={9} />
+                   <View style={[styles.roundButton,{  backgroundColor: colorHum}]} >
+                     <Ionicons  name= {SensorType == "Luce"? "ios-close" : "water"}  size={20} color="#6495ED" />
+                     <Text style={{fontWeight: "bold"}}>{SensorType == "Luce"? "--" : this.props.sensorHum}</Text>
+                   </View>
 
-                 <TouchableOpacity  onPress={() => this.onPanelChange("Nothing")}
-                 style={styles.confirmButton}>
-                  <AntDesign name="checkcircle" size={24} color="#A7D489" />
-                 </TouchableOpacity>
+                   <RangePicker sensorName = {dictionary[SensorType]} isHum = {true}   min= {parseInt(this.props.minHum)}  max={parseInt(this.props.maxHum)}  callback={this.getResponse.bind(this)}/>
 
-             </View>
 
-            </View>
-          )
+               </View>
+              </View>
+            )
+            }
+
         }
   }
 }
@@ -189,23 +223,6 @@ const styles = StyleSheet.create ({
   },
 
 
-  confirmButton : {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ECEBC9',
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.48,
-    shadowRadius: 11.95,
-
-    elevation: 18,
-  },
 
 
 })
