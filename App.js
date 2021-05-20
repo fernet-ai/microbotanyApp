@@ -6,6 +6,7 @@ import { Ionicons, MaterialCommunityIcons, FontAwesome, AntDesign} from '@expo/v
 import LogSensorPanel from './components/LogSensorPanel.js';
 import ViewPager from '@react-native-community/viewpager';
 import mascotte from './assets/piantina_insomma.png';
+import serra from './assets/serra.jpg';
 import {LineChart} from 'react-native-chart-kit';
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.70}
@@ -212,14 +213,23 @@ export default class initialScreen extends React.Component {
                  }}>
 
                     <TouchableOpacity style={styles.plus} >
-                      <FontAwesome name="plus" size={25} color="black" />
+                      <FontAwesome name="plus" size={25} color="#CAAD7E" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.swap} >
+                      <MaterialCommunityIcons name="swap-horizontal-bold" size={25} color="#CAAD7E" />
                     </TouchableOpacity>
 
                    <View style={styles.roundButton} >
-                     <Text>Sbargia's Serra</Text>
-                     <MaterialCommunityIcons name="home-analytics" size={60} color="black" />
-                   </View>
-
+                      <Text style={{color: 'white',
+                                    fontWeight: 'bold',
+                                    position: 'absolute',
+                                    bottom: 40,
+                                    right: 30,
+                                    elevation: 2,
+                                  }}>Sbargia's Serra</Text>
+                     <Image source={serra} style={styles.roundSerra} />
+                  </View>
 
                 </View>
 
@@ -331,16 +341,40 @@ const styles = StyleSheet.create({
     },
 
     plus :{
+      width: 50,
+      height: 50,
       backgroundColor: '#ECEBC9',
       alignItems: 'center',
       justifyContent: 'center',
       borderColor: 'white',
       borderRadius: 120,
-      paddingHorizontal: '8%',
-      paddingVertical: '6%',
       position: 'absolute',
       bottom: 40,
       right: 20,
+      borderColor: 'black',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.48,
+      shadowRadius: 11.95,
+
+      elevation: 20,
+    },
+
+
+    swap :{
+      width: 40,
+      height: 40,
+      backgroundColor: '#ECEBC9',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: 'white',
+      borderRadius: 120,
+      position: 'absolute',
+      bottom: 95,
+      right: 5,
       borderColor: 'black',
       shadowColor: "#000",
       shadowOffset: {
@@ -359,7 +393,7 @@ const styles = StyleSheet.create({
       width: '80%',
       flexDirection: 'column',
       justifyContent: 'center',
-      padding: '5%',
+      padding: '2%' ,
       alignItems: 'center',
       borderRadius: 100,
       borderTopRightRadius: 0,
@@ -374,6 +408,14 @@ const styles = StyleSheet.create({
       shadowRadius: 11.95,
 
       elevation: 18,
+    },
+
+    roundSerra: {
+      height: '100%',
+      width: '100%',
+      borderRadius: 100,
+      borderTopRightRadius: 0,
+      borderTopLeftRadius: 0,
     },
 
 
