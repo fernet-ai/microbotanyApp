@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Dimensions,TouchableOpacity } from 'react-native'
+import { Text, View, StyleSheet, Dimensions,TouchableOpacity, ProgressBarAndroid} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome, Ionicons , MaterialCommunityIcons, MaterialIcons, Entypo, Feather, FontAwesome5, AntDesign} from '@expo/vector-icons';
 import RangePicker from './RangePicker';
@@ -35,14 +35,17 @@ export default  class LogSensorPanel extends React.Component {
 
 
   errorDetection = (val, max, min) => {
-    if(val == "NaN" || val == null) return "#FEE23E";
-    if(val >= min && val <= max) return "white";
-    if(val < min || val > max) return "#FD6A02";
+    if(val == "NaN" || val == null) return "#FEE23E"; //Yellow
+    //if(val >= min && val <= max) return "ECEBC9"; // White
+    if(val < min || val > max) return "#FD6A02"; // Red
+
+    return "#ECEBC9" //White
   }
 
 
   getResponse(result){
     this.onPanelChange(result); //dovrebbe restituire Nothing
+    console.log("Ho fatto appena fatto una richiesta di aggiornamento di range");
 }
 
 
@@ -82,6 +85,8 @@ export default  class LogSensorPanel extends React.Component {
              />
               <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+                  {this.props.loaded && <ProgressBarAndroid styleAttr = "Small"/>}
                   <Text  style={styles.sensorName}>  {SensorType}  </Text>
                   {iconAdded}
                 </View>
@@ -132,7 +137,7 @@ export default  class LogSensorPanel extends React.Component {
                      <Text style={{fontWeight: "bold"}}>{this.props.sensorValue}</Text>
                      </View>
 
-                     <RangePicker sensorName = {dictionary[SensorType]} isHum = {false}   min= {parseInt(this.props.minValue)}  max={parseInt(this.props.maxValue)} callback={this.getResponse.bind(this)}/>
+                     <RangePicker sensorName = {dictionary[SensorType]} isHum = {false}   min= {parseInt(this.props.minValue) || 15}  max={parseInt(this.props.maxValue) || 16} callback={this.getResponse.bind(this)}/>
 
 
 
@@ -153,7 +158,7 @@ export default  class LogSensorPanel extends React.Component {
                      <Text style={{fontWeight: "bold"}}>{SensorType == "Luce"? "--" : this.props.sensorHum}</Text>
                    </View>
 
-                   <RangePicker sensorName = {dictionary[SensorType]} isHum = {true}   min= {parseInt(this.props.minHum)}  max={parseInt(this.props.maxHum)}  callback={this.getResponse.bind(this)}/>
+                   <RangePicker sensorName = {dictionary[SensorType]} isHum = {true}   min= {parseInt(this.props.minHum)|| 15 }  max={parseInt(this.props.maxHum) || 16}  callback={this.getResponse.bind(this)}/>
 
 
                </View>

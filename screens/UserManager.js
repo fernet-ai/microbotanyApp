@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView, ScrollView  } from "react-native"
 import { LinearGradient } from 'expo-linear-gradient';
 
 
-export default class InfoScreen extends React.Component {
+export default class UserManager extends React.Component {
 
     constructor(props) {
       super(props);

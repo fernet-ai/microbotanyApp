@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Dimensions,TouchableOpacity, SectionList, FlatList } from 'react-native'
+import { Text, View, StyleSheet, Dimensions,TouchableOpacity, SectionList, FlatList, AsyncStorage} from 'react-native'
 import SmoothPicker from "react-native-smooth-picker";
 import {AntDesign} from '@expo/vector-icons';
 
@@ -13,10 +13,16 @@ export default  class RangePicker extends React.Component {
      this.state = {
 			 selectedMax: this.props.max,
  		 	 selectedMin: this.props.min,
+       token: undefined,
      }
 
   }
 
+  async componentDidMount() {
+    myToken = await AsyncStorage.getItem('Token');
+    if(myToken)
+      this.setState({token: myToken});
+ }
 
 
 	handleChangeMin  =  index  =>  {
@@ -49,14 +55,32 @@ export default  class RangePicker extends React.Component {
         console.log("ecco il nome del mio sensore: "+ this.props.sensorName + "  anche "+ this.props.isHum);
         console.log("e min: "+ this.state.selectedMin+ " max: "+this.state.selectedMax)
 
+
+        let bodyO = {}
+
         if(this.props.isHum){
-          fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MIN_hum/'+this.state.selectedMin);
-          fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MAX_hum/'+this.state.selectedMax);
-         }
-         else{
-           fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MIN/'+this.state.selectedMin);
-           fetch('http://www.microbotany.online/api/set/'+this.props.sensorName+'_MAX/'+this.state.selectedMax);           
-         }
+          bodyO[this.props.sensorName.toLowerCase()+"MIN_hum"] = this.state.selectedMin.toString()
+          bodyO[this.props.sensorName.toLowerCase()+"MAX_hum"] = this.state.selectedMax.toString()
+          bodyO["idGB"] = "GB-00001"
+          }
+        else {
+          bodyO[this.props.sensorName.toLowerCase()+"MIN"] = this.state.selectedMin.toString()
+          bodyO[this.props.sensorName.toLowerCase()+"MAX"] = this.state.selectedMax.toString()
+          bodyO["idGB"] = "GB-00001"
+        }
+
+        console.log("corpo richiesta", bodyO)
+
+        fetch("https://microbotany-api.herokuapp.com/gbox/setRanges", {
+              method: "POST",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'x-access-token': this.state.token
+              },
+              body: JSON.stringify(bodyO)
+
+            })
 
         this.props.callback('Nothing');
     }

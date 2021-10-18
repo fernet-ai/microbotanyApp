@@ -1,5 +1,5 @@
 import React, { Component, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View , Image, Animated, TextInput, Alert} from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View , Image, Animated, TextInput, Alert, ProgressBarAndroid, AsyncStorage} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import AppIntroSlider from 'react-native-app-intro-slider';
@@ -40,6 +40,10 @@ export default class App extends Component {
     super(props);
     this.state = {
       SignedIn: false,
+      ErrorLogin: false,
+      buffering: false,
+      email: "",
+      password: "",
       fadeAnim: new Animated.Value(0.3),
     };
   }
@@ -71,9 +75,36 @@ signUp = async() => {
   	Alert.alert("Finisci la schermata di registrazione.");
   }
 
+
   login = async() => {
-    	this.setState({SignedIn: true});
-    }
+     this.setState({buffering: true});
+      console.log("Dati di login: "+ this.state.email+ " "+this.state.password);
+      fetch("https://microbotany-api.herokuapp.com/user/signIn", {
+            method: "POST",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: this.state.email,
+              password: this.state.password,
+            })
+          }).then((response) => response.json()).then((responseData) => {
+
+                this.setState({buffering: false});
+
+                if(responseData.token){
+                  console.log("Il mio token: "+responseData.token);
+                  this.setState({SignedIn: true, buffering: false});
+                  AsyncStorage.setItem("Token", responseData.token);
+                }
+                else this.setState({ErrorLogin: true});
+
+
+          }).done();
+
+  }
+
 
 
 
@@ -91,18 +122,32 @@ signUp = async() => {
             <TextInput
                style = {styles.TextInput}
                placeholder="Email"
+               onChangeText={(text) => this.setState({email: text})}
                />
             <TextInput
+              secureTextEntry={true}
               style = {styles.TextInput}
               placeholder="Password"
+              onChangeText={(text) => this.setState({password: text})}
              />
 
-            <TouchableOpacity  onPress={this.login}  style={styles.LoginButton}>
-                <Text style= {{fontSize: 20}}>Login</Text>
+             {this.state.ErrorLogin?
+              (<Text style= {{fontSize: 15, color: "red"}}>Email o password sono errati</Text>
+            ):(null)}
+
+
+            <TouchableOpacity  onPress={this.login}  style={styles.LoginButton} disabled={this.state.buffering}>
+                 {this.state.buffering ?
+                  (<ProgressBarAndroid/>):
+                  (<Text style= {{fontSize: 20, color: "white"}}>Accedi</Text>)
+                }
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.GoogleButton}>
-                <Text style= {{fontSize: 18}}>Accedi con Google</Text>
+              <Text>
+                <Text style= {{fontSize: 16}}>Accedi con </Text>
+                <Text style= {{fontSize: 18, fontWeight: "bold", color: "white"}}> Google</Text>
+              </Text>
             </TouchableOpacity>
 
             <Text>

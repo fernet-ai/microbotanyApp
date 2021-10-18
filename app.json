@@ -20,11 +20,7 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.fernet.MicrobotanyApp"
+      "package": "com.fernet.microbotany"
     },
     "web": {
       "favicon": "./assets/favicon.png"

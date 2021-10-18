@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Animated} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Animated, AsyncStorage} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, MaterialCommunityIcons, FontAwesome, AntDesign} from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, FontAwesome, Entypo, AntDesign} from '@expo/vector-icons';
 import LogSensorPanel from '../components/LogSensorPanel.js';
 import ViewPager from '@react-native-community/viewpager';
 import mascotte from '../assets/piantina_insomma.png';
@@ -17,50 +17,50 @@ export default class initialScreen extends React.Component {
     constructor(props) {
       super(props)
       this.state = {
-        jsonSensorValues: '',
-        jsonSensorRanges: '',
+        token: undefined,
+        DataFromServer: "",
         animMascotte:  new Animated.Value(0),
       }
     }
 
 
-      componentDidMount() {
-        // Update Sensor's values
-        this.updateValues();
-        this.updateHum();
-        this.pollingValues = setInterval(() => this.updateValues(), 60000);
-        this.pollingHum = setInterval(() => this.updateHum(), 60000);
+      async componentDidMount() {
+        myToken = await AsyncStorage.getItem('Token');
+        if(myToken){
+          this.setState({token: myToken});
+          // Update Sensor's values
+          this.updateValues();
+          this.pollingValues = setInterval(() => this.updateValues(), 60000);
+        }
+
+
       }
 
       componentWillUnmount() {
         console.log("Sto smontando tutto ..")
         clearInterval(this.pollingValues);
-        clearInterval(this.pollingHum);
       }
 
       updateValues = async () => {
-        fetch('http://www.microbotany.online/api/log')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            console.log("pesco da value: "+responseJson.REFL);
-            this.setState({jsonSensorValues: responseJson});
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        fetch("https://microbotany-api.herokuapp.com/gbox/log", {
+              method: "GET",
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'x-access-token': this.state.token
+              }
+            }).then((response) => response.json())
+                .then((responseJson) => {
+                  console.log(responseJson.message);
+                  console.log("pesco da value: "+responseJson);
+                  this.setState({DataFromServer: responseJson});
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
       }
 
-      updateHum = async () => {
-        fetch('http://www.microbotany.online/api/ranges')
-          .then((response) => response.json())
-          .then((responseJson) => {
-            console.log("pesco da ranges: "+responseJson.REFSSMIN);
-            this.setState({jsonSensorRanges: responseJson});
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
+
 
 
       openMascotte(offset) {
@@ -78,6 +78,18 @@ export default class initialScreen extends React.Component {
 
       }
 
+      goUserScreen = () => {
+        console.log("vai schermata profilo");
+        this.props.navigation.navigate('Profile', {unDato:  "ciao"});
+      }
+
+
+      loadToken = async () => {
+          AsyncStorage.getItem("Token").then((myToken) => {
+            this.setState({token: myToken});
+       });
+      }
+
 
 
   	render(){
@@ -89,44 +101,53 @@ export default class initialScreen extends React.Component {
 
       <ViewPager style={styles.viewPager} initialPage={0}>
           <View style={styles.page} key="1">
-            <View style={{flexDirection: 'row',  }}>
+            <View style={{flexDirection: 'row'}}>
               <LogSensorPanel
                 sensorName="Suolo"
-                sensorValue = {this.state.jsonSensorValues.REFSS}
-                sensorHum = {this.state.jsonSensorValues.REFSS_HUM}
-                maxValue = {this.state.jsonSensorRanges.REFSSMAX}
-                minValue = {this.state.jsonSensorRanges.REFSSMIN}
-                maxHum = {this.state.jsonSensorRanges.REFSSMAX_hum}
-                minHum = {this.state.jsonSensorRanges.REFSSMIN_hum}
+                sensorValue = {this.state.DataFromServer.refss}
+                sensorHum = {this.state.DataFromServer.refss_hum}
+                maxValue = {this.state.DataFromServer.refssMAX}
+                minValue = {this.state.DataFromServer.refssMIN}
+                maxHum = {this.state.DataFromServer.refssMAX_hum}
+                minHum = {this.state.DataFromServer.refssMIN_hum}
+                loaded = {this.state.DataFromServer == ""}
                 />
               <LogSensorPanel
                 sensorName="Interno"
-                sensorValue = {this.state.jsonSensorValues.REFAI}
-                sensorHum = {this.state.jsonSensorValues.REFAI_HUM}
-                maxValue = {this.state.jsonSensorRanges.REFAIMAX}
-                minValue = {this.state.jsonSensorRanges.REFAIMIN}
-                maxHum = {this.state.jsonSensorRanges.REFAIMAX_hum}
-                minHum = {this.state.jsonSensorRanges.REFAIMIN_hum}
+                sensorValue = {this.state.DataFromServer.refai}
+                sensorHum = {this.state.DataFromServer.refai_hum}
+                maxValue = {this.state.DataFromServer.refaiMAX}
+                minValue = {this.state.DataFromServer.refaiMIN}
+                maxHum = {this.state.DataFromServer.refaiMAX_hum}
+                minHum = {this.state.DataFromServer.refaiMIN_hum}
+                loaded = {this.state.DataFromServer == ""}
                 />
             </View>
 
             <View style={{flexDirection: 'row', }}>
               <LogSensorPanel
                 sensorName="Esterno"
-                sensorValue = {this.state.jsonSensorValues.REFAE}
-                sensorHum = {this.state.jsonSensorValues.REFAE_HUM}
-                maxValue = {this.state.jsonSensorRanges.REFAEMAX}
-                minValue = {this.state.jsonSensorRanges.REFAEMIN}
-                maxHum = {this.state.jsonSensorRanges.REFAEMAX_hum}
-                minHum = {this.state.jsonSensorRanges.REFAEMIN_hum}
+                sensorValue = {this.state.DataFromServer.refae}
+                sensorHum = {this.state.DataFromServer.refae_hum}
+                maxValue = {this.state.DataFromServer.refaeMAX}
+                minValue = {this.state.DataFromServer.refaeMIN}
+                maxHum = {this.state.DataFromServer.refaeMAX_hum}
+                minHum = {this.state.DataFromServer.refaeMIN_hum}
+                loaded = {this.state.DataFromServer == ""}
                 />
               <LogSensorPanel
                 sensorName="Luce"
-                sensorValue = {this.state.jsonSensorValues.REFL}
-                maxValue = {this.state.jsonSensorRanges.REFLMAX}
-                minValue = {this.state.jsonSensorRanges.REFLMIN}
+                sensorValue = {this.state.DataFromServer.refl}
+                maxValue = {this.state.DataFromServer.reflMAX}
+                minValue = {this.state.DataFromServer.reflMIN}
+                loaded = {this.state.DataFromServer == ""}
                 />
             </View>
+
+            <View style = {{width: "100%", alignItems: "center"}}>
+              <Text style = {{fontSize: 14, padding: 2, textAlign: "center"}}>Ultimo aggiornamento da GBox:{"\n"}{this.state.DataFromServer.lastUpdate}</Text>
+            </View>
+
           </View>
 
           <View style={styles.page} key="2">
@@ -178,7 +199,14 @@ export default class initialScreen extends React.Component {
 
 
           <View style={styles.page} key="3">
-            <Text> SCHERMATA SVILUPPO </Text>
+            <View style={{height: "60%", width: '90%',
+            backgroundColor: 'rgba(167, 212, 137, 0.7)', alignItems: "center",
+            justifyContent: "space-evenly", borderRadius: 20}}>
+
+              <Text style={{fontSize: 22, color: "black", fontWeight: "bold"}}>Schermata Sviluppo</Text>
+                <Entypo name="lock" size={100} color="white" />
+                <Text style={{fontSize: 16}}>Non disponibile nella versione Starter</Text>
+            </View>
           </View>
 
         </ViewPager>
@@ -227,7 +255,7 @@ export default class initialScreen extends React.Component {
                                     bottom: 40,
                                     right: 30,
                                     elevation: 2,
-                                  }}>Sbargia's Serra</Text>
+                                  }}>{this.state.DataFromServer.GBname}</Text>
                      <Image source={serra} style={styles.roundSerra} />
                   </View>
 
@@ -252,7 +280,7 @@ export default class initialScreen extends React.Component {
                 <MaterialCommunityIcons name="book-open-page-variant" size={40} color="#ECEBC9" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={this.goSettings}>
+              <TouchableOpacity onPress={this.goUserScreen}>
                   <FontAwesome name="user" size={40} color="#ECEBC9" />
               </TouchableOpacity>
 
@@ -309,6 +337,7 @@ const styles = StyleSheet.create({
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          paddingTop: "5%",
         },
 
 
